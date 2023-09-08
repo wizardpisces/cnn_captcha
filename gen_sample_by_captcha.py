@@ -34,6 +34,8 @@ def gen_ima_by_batch(root_dir, image_suffix, characters, count, char_count, widt
 
 
 def main():
+
+    # http://consultacadastral.inss.gov.br/Esocial/api/imagem?d=I_51cf40f1-c78d-4377-9f00-9b19d27e4e21_6C91EF6457672020C0BA4A8573D09AA5.lbroute_v131p039_internet&amp;uId=1693815632300
     with open("conf/captcha_config.json", "r") as f:
         config = json.load(f)
     # 配置参数

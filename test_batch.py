@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
 import json
 
-import tensorflow as tf
+# import tensorflow as tf
 import numpy as np
 import time
 from PIL import Image
 import random
 import os
 from cnnlib.network import CNN
-
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
 
 class TestError(Exception):
     pass
