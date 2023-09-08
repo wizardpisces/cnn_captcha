@@ -32,6 +32,30 @@ class CNN(object):
         图片转为灰度图，如果是3通道图则计算，单通道图则直接返回
         :param img:
         :return:
+
+        eg:
+       img= [
+                [
+                    [111,112,113],
+                    [111,112,113],
+                ],
+                [
+                    [111,112,113],
+                    [111,112,113],
+                ]
+            ] # shape = [2,2,3]
+
+       img[:, :, 0] => [2,2,1]
+        [
+            [
+                [111],
+                [111]
+            ],
+            [
+                [111],
+                [111]
+            ],
+        ]
         """
         if len(img.shape) > 2:
             r, g, b = img[:, :, 0], img[:, :, 1], img[:, :, 2]
@@ -50,10 +74,10 @@ class CNN(object):
         if text_len > self.max_captcha:
             raise ValueError('验证码最长{}个字符'.format(self.max_captcha))
 
-        vector = np.zeros(self.max_captcha * self.char_set_len)
+        vector = np.zeros(self.max_captcha * self.char_set_len) # shape = [max_captcha*36]
 
         for i, ch in enumerate(text):
-            idx = i * self.char_set_len + self.char_set.index(ch)
+            idx = i * self.char_set_len + self.char_set.index(ch) # idx = (0-max_captcha+1)*36+(0-36)
             vector[idx] = 1
         return vector
 
