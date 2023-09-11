@@ -136,7 +136,8 @@ class TrainModel(CNN):
 
     def train_cnn(self):
         y_predict = self.model()
-        print(">>> input batch predict shape: {}".format(y_predict.shape))
+        print(">>> input batch predict shape: {}".format(
+            y_predict.shape))  # (?,max_captcha * char_set_len) eg: 144 = 36 * 4
         print(">>> End model test")
         # 计算概率 损失
         with tf.name_scope('cost'):
@@ -144,15 +145,25 @@ class TrainModel(CNN):
         # 梯度下降
         with tf.name_scope('train'):
             optimizer = tf.train.AdamOptimizer(learning_rate=0.0001).minimize(cost)
-        # 计算准确率
-        predict = tf.reshape(y_predict, [-1, self.max_captcha, self.char_set_len])  # 预测结果
-        max_idx_p = tf.argmax(predict, 2)  # 预测结果
-        max_idx_l = tf.argmax(tf.reshape(self.Y, [-1, self.max_captcha, self.char_set_len]), 2)  # 标签
-        # 计算准确率
+        # 计算准确率 -1 会自动化成 batch_size 的大小 =》 (batch_size, max_captcha, char_set_len)
+        predict = tf.reshape(y_predict, [-1, self.max_captcha, self.char_set_len])
+        # tf.argmax(tensor,2) 返回了 self.Y 在第三维上的最大值的索引, eg: (1, max_captcha, char_set_len) => (1, max_captcha)
+        # 预测结果 它返回了 predict 在第三维上的最大值的索引，即每个样本每个位置上最可能的字符。
+        # https://blog.51cto.com/u_12701820/3044677
+        # (batch_size, max_captcha, char_set_len) => (batch_size, max_captcha)
+        max_idx_p = tf.argmax(predict, 2)
+        # 标签 返回了 self.Y 在第三维上的最大值的索引，即每个样本每个位置上真实的字符。
+        max_idx_l = tf.argmax(tf.reshape(
+            self.Y, [-1, self.max_captcha, self.char_set_len]), 2)
+        # 计算准确率 (batch_size, max_captcha)
         correct_pred = tf.equal(max_idx_p, max_idx_l)
         with tf.name_scope('char_acc'):
+            #  tf.reduce_mean(tensor) 求tensor所有值的平均值
+            # 它计算了 correct_pred 中为 True 的比例，即预测正确的字符数占总字符数的比例。
             accuracy_char_count = tf.reduce_mean(tf.cast(correct_pred, tf.float32))
         with tf.name_scope('image_acc'):
+            # tf.reduce_min(tensor,1) 求tensor 的二维数据的最小值
+            # (batch_size, max_captcha)，求 max_captcha 中如果有一个是 False 则判定整个为 False
             accuracy_image_count = tf.reduce_mean(tf.reduce_min(tf.cast(correct_pred, tf.float32), axis=1))
         # 模型保存对象
         saver = tf.train.Saver()

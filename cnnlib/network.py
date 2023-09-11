@@ -125,6 +125,7 @@ class CNN(object):
         bout = tf.Variable(self.b_alpha * tf.random_normal([self.max_captcha * self.char_set_len]))
 
         with tf.name_scope('y_prediction'):
-            y_predict = tf.add(tf.matmul(dense, wout), bout)
+            # matmul 矩阵相乘，并加上偏置 bout
+            y_predict = tf.add(tf.matmul(dense, wout), bout) 
 
         return y_predict
