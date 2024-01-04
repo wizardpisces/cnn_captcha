@@ -59,7 +59,8 @@ class CNN(object):
         """
         if len(img.shape) > 2:
             r, g, b = img[:, :, 0], img[:, :, 1], img[:, :, 2]
-            gray = 0.2989 * r + 0.5870 * g + 0.1140 * b
+            gray = 0.2989 * r + 0.5870 * g + 0.1140 * b # 准确率 56.0%左右
+            # gray = 0.3 * r + 0.5 * g + 0.2 * b  # 准确率 63.0% 左右
             return gray
         else:
             return img
